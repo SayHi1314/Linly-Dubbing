@@ -55,7 +55,8 @@ def load_model(model_name: str = "htdemucs_ft", device: str = 'auto', progress: 
     t_start = time.time()
 
     device_to_use = auto_device if device == 'auto' else device
-    separator = Separator(model_name, device=device_to_use, progress=progress, shifts=shifts)
+    logger.info(f"Demucs模型加载时选择的device: {device_to_use}")
+    separator = Separator(model_name, device=device_to_use, progress=progress, shifts=shifts,segment=300)
 
     # 存储当前模型配置
     current_model_config = {
