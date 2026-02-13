@@ -138,6 +138,7 @@ def synthesize_video(folder, subtitles=True, speed_up=1.00, fps=30, resolution='
         watermark_filter = f";[2:v]scale=iw*0.15:ih*0.15[wm];[v][wm]overlay=W-w-10:H-h-10[v]"
         ffmpeg_command = [
             'ffmpeg',
+            '-hwaccel', 'cuda',
             '-i', input_video,
             '-i', input_audio,
             '-i', watermark_path,
@@ -146,7 +147,7 @@ def synthesize_video(folder, subtitles=True, speed_up=1.00, fps=30, resolution='
             '-map', '[a]',
             '-r', str(fps),
             '-s', resolution,
-            '-c:v', 'libx264',
+            '-c:v', 'h264_nvenc',
             '-c:a', 'aac',
             final_video,
             '-y',
@@ -155,6 +156,7 @@ def synthesize_video(folder, subtitles=True, speed_up=1.00, fps=30, resolution='
     else:
         ffmpeg_command = [
             'ffmpeg',
+            '-hwaccel', 'cuda',
             '-i', input_video,
             '-i', input_audio,
             '-filter_complex', filter_complex,
@@ -162,7 +164,7 @@ def synthesize_video(folder, subtitles=True, speed_up=1.00, fps=30, resolution='
             '-map', '[a]',
             '-r', str(fps),
             '-s', resolution,
-            '-c:v', 'libx264',
+            '-c:v', 'h264_nvenc',
             '-c:a', 'aac',
             final_video,
             '-y',
@@ -305,8 +307,10 @@ def add_subtitles(video_path, srt_path, output_path, subtitle_filter=None, metho
                 # 构建命令
                 command = [
                     'ffmpeg',
+                    '-hwaccel', 'cuda',
                     '-i', f"{temp_video_path}",
                     '-vf', f"{filter_option}",
+                    '-c:v', 'h264_nvenc',
                     '-c:a', 'copy',
                     f"{temp_output_path}",
                     '-y',
